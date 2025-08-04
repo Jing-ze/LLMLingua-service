@@ -1,0 +1,21 @@
+# LLMLingua Service Configuration
+
+# Server Configuration
+server:
+  host: "0.0.0.0"
+  port: 8000
+  timeout_keep_alive: 900  # 15 minutes keep-alive
+  timeout_graceful_shutdown: 900  # Graceful shutdown timeout
+  access_log: true
+  workers: 4
+
+# Model Configuration
+model:
+  default_model_path: "models/llmlingua-2-xlm-roberta-large-meetingbank"
+  default_device_map: "cuda"
+  pool_size: 2
+  use_llmlingua2: true
+
+# Logging Configuration
+logging:
+  level: "INFO" 
