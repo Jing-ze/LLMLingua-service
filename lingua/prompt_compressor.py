@@ -23,9 +23,6 @@ from transformers import (
 )
 from torch.cuda.amp import autocast
 
-
-from optimum.intel import OVModelForTokenClassification
-
 from .utils import (
     TokenClfDataset,
     get_pure_token,
@@ -141,32 +138,24 @@ class PromptCompressor:
             if any(key in device_map for key in ["cuda", "cpu", "mps"])
             else "cuda"
         )
-        if not self.openvino:
-            if "cuda" in device_map or "cpu" in device_map:
-                model = MODEL_CLASS.from_pretrained(
-                    model_name,
-                    torch_dtype=model_config.pop(
-                        "torch_dtype", "auto" if device_map == "cuda" else torch.float32
-                    ),
-                    device_map=device_map,
-                    config=config,
-                    ignore_mismatched_sizes=True,
-                    **model_config,
-                )
-            else:
-                model = MODEL_CLASS.from_pretrained(
-                    model_name,
-                    export=True,
-                    device_map=device_map,
-                    torch_dtype=model_config.pop("torch_dtype", "auto"),
-                    pad_token_id=tokenizer.pad_token_id,
-                    **model_config,
-                )
-        else:
-            model = OVModelForTokenClassification.from_pretrained(
+        if "cuda" in device_map or "cpu" in device_map:
+            model = MODEL_CLASS.from_pretrained(
                 model_name,
-                device=device_map,
-                load_in_8bit=True,
+                torch_dtype=model_config.pop(
+                    "torch_dtype", "auto" if device_map == "cuda" else torch.float32
+                ),
+                device_map=device_map,
+                config=config,
+                ignore_mismatched_sizes=True,
+                **model_config,
+            )
+        else:
+            model = MODEL_CLASS.from_pretrained(
+                model_name,
+                export=True,
+                device_map=device_map,
+                torch_dtype=model_config.pop("torch_dtype", "auto"),
+                pad_token_id=tokenizer.pad_token_id,
                 **model_config,
             )
         self.tokenizer = tokenizer
