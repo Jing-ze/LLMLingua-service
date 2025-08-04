@@ -4,9 +4,9 @@ import logging
 import yaml
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
-from compressor_pool import CompressorPool
-from models import CompressRequest, build_compression_params
-from config import load_config, setup_logging
+from service.compressor_pool import CompressorPool
+from service.models import CompressRequest, build_compression_params
+from service.config import load_config, setup_logging
 
 # Load configuration
 config = load_config()
